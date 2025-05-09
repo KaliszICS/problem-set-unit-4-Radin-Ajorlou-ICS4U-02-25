@@ -7,15 +7,14 @@ public class ProblemSetTest {
 
    //Create your tests here if you want any
 
-   /*
 
    //Example Test
    
    @Test
    public void exampleTest()
    {
-      Cat cat = new Cat();
-      assertEquals("whiskers", cat.getName());
+      Card queen = new Card("Queen", "Heart", 13);
+      Card king = new Card("King", "Spade", 14);
+      System.out.println(queen.equals(new Object[]{null}));
    }
-   */
 }
