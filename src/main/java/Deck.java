@@ -1,9 +1,10 @@
+
+import java.util.*;
 /**
  * Deck of cards class
  * @author Radin Ajorlou
  * @version 1.0.0
  */
-import java.util.*;
 class Deck {
     String[] suits = new String[] {"Hearts", "Clubs", "Diamonds", "Spades"};
     private static final int suitsNum = 4;
@@ -11,17 +12,20 @@ class Deck {
     private static final int cardsNum = 13;
     private static final int maxCards = 52;
 
+    //create empty deck
     private Card[] deck;
 
     /**
-     * First constructoe:Takes in a deck of cards and sets it as the deck
-     * @param cards An array of cards
+     * Deck class constructor 
+     * @param cards Card[] - the array of cards to go into the deck
      */
     public Deck(Card[] cards){
         this.deck = cards;
     }
     
-    //Second constructor: generates an unshuffled deck of cards
+    /**
+     * Second constructor 0 argument: generates an unshuffled deck of cards (Hearts, clubs diamonds spades)(Ace -> king)
+     */
     public Deck(){
         this.deck = new Card[maxCards];
         for (int i = 0; i < suitsNum; i++){
@@ -52,6 +56,9 @@ class Deck {
      * @return Card - Top card (arr[0]);
      */
     public Card draw(){
+        if (this.deck.length < 1){
+            return null;
+        }
         Card[] newDeck = new Card[this.deck.length - 1];
         Card top = this.deck[0];
         for (int i = 1; i < newDeck.length + 1; i++){
@@ -66,7 +73,8 @@ class Deck {
      * Shuffles the deck no argument
      */
     public void shuffle(){
-        for (int i = 0; i < this.deck.length; i++){
+        int length = this.deck.length;
+        for (int i = 0; i < length; i++){
             Random rand = new Random();
             int swapWithIndex = rand.nextInt(this.deck.length);
             Card temp = this.deck[i];
@@ -79,33 +87,46 @@ class Deck {
      * Adds a new card into the deck
      * @param newCard Card - card that will be added into the deck
      */
-    public void addCard(Card newCard){
+    public Card addCard(Card newCard){
         if (newCard == null){
-            return;
+            return newCard;
         }
-        Card[] newDeck = new Card[this.deck.length + 1];
-        for (int i = 0; i < newDeck.length - 1; i++){
+        int length = this.deck.length;
+        Card[] newDeck = new Card[length + 1];
+        for (int i = 0; i < length; i++){
             newDeck[i] = this.deck[i];
         }
-        newDeck[newDeck.length] = newCard;
+        newDeck[length] = newCard;
         this.deck = newDeck;
-    } //NOT SURE IF THIS WORKS CHECK BACK AFTER 
+        return newCard;
+    } 
 
-    public void removeCard(Card cardToBeRemoved, DiscardPile discardPile){
+    /**
+     * remove card out of deck
+     * @param cardToBeRemoved Card - Card thats to be removed from the deck
+     * @return Card - card that has been removed from deck - null if it wasnt in the deck
+     */
+    public Card removeCard(Card cardToBeRemoved){
         int length = this.deck.length;
+        if (length < 1){
+            return null;
+        }
         Card[] newDeck = new Card[length - 1];
         boolean cardExists = false;
-        for (int i = 0, j = 0; i < length; i++, j++){
+        for (int i = 0, j = 0; j < length; i++, j++){
             if(this.deck[j] == cardToBeRemoved){
-                discardPile.addCard(cardToBeRemoved);
                 cardExists = true;
                 j++;
             }
-            newDeck[i] = this.deck[j];
+            if (i < length - 1){
+                newDeck[i] = this.deck[j];
+            }
         }
         if (cardExists){ //only if the card exists the hand gets changed which means if it doesnt the size of the hand stays the same
             this.deck = newDeck;
+            return cardToBeRemoved;
         }
+        return null;
     }
     
 
@@ -124,17 +145,38 @@ class Deck {
         for (int i = 0; i < newCards.length; i++){
             newDeck[i + this.deck.length] = newCards[i]; // add every card from the new set of cards into the new deck
         }
-        this.deck = newDeck;
-
-        //reshuffles
-        for (int i = 0; i < this.deck.length; i++){
-            Random rand = new Random();
-            int swapWithIndex = rand.nextInt(this.deck.length);
-            Card temp = this.deck[i];
-            this.deck[i] = this.deck[swapWithIndex];
-            this.deck[swapWithIndex] = temp;
-        }
-        
+        Deck newestDeck = new Deck(newDeck); //reshuffles
+        newestDeck.shuffle();
+        this.deck = newestDeck.getDeck();     
     }
 
+    /**
+     * Override of the ToString method for the Deck
+     * @return String - in format (card1, card2, etc..) e.g(Queen of Hearts, King of Spades);
+     */
+    @Override
+    public String toString(){
+        int length = this.deck.length;
+        if (length < 1){
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++){
+            if (this.deck[i] != null){
+                sb.append(this.deck[i].toString() + ", ");
+            }
+        }
+        System.out.println(sb.length());
+        sb.delete(sb.length() - 2, sb.length() + 1);
+        return sb.toString();
+    }
+
+    /**
+     * Override of the clone method for the class Deck
+     * @return Deck - a copy of the deck
+     */
+    @Override
+    public Deck clone(){
+        return new Deck(this.deck);
+    }
 }

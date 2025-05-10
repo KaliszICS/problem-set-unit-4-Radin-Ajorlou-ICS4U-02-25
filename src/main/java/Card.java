@@ -8,7 +8,12 @@ class Card{
     private String suit;
     private int value;
 
-    //Constructor
+    /**
+     * Card class constructor takes name suit and value of card
+     * @param name String - name of card
+     * @param suti String - suit of card
+     * @param value int - value of card
+     */
     public Card(String name, String suit, int value){
         this.name = name;
         this.suit = suit;
@@ -65,8 +70,15 @@ class Card{
             return false;
         }
 
-            return false;
+            return false;      
+    }
 
-        
+    /**
+     * The clone method for type Card 0 argment
+     * @return Card - a copy of the card
+     */
+    @Override 
+    public Card clone(){
+        return new Card(this.name , this.suit , this.value);
     }
 }
